@@ -1,42 +1,27 @@
 {
   "name": "@sudobility/subscription_service",
-  "version": "1.0.0",
-  "description": "Shared rate limiting library based on RevenueCat entitlements",
+  "version": "1.0.1",
+  "description": "Shared subscription management library using RevenueCat for entitlements",
   "type": "module",
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.js",
+  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
-    },
-    "./middleware/hono": {
-      "import": "./dist/middleware/hono.js",
-      "require": "./dist/middleware/hono.cjs",
-      "types": "./dist/middleware/hono.d.ts"
-    },
-    "./schema": {
-      "import": "./dist/schema/rate-limits.js",
-      "require": "./dist/schema/rate-limits.cjs",
-      "types": "./dist/schema/rate-limits.d.ts"
     }
   },
   "scripts": {
-    "build": "bun run build:esm && bun run build:cjs",
-    "build:esm": "bunx tsc -p tsconfig.esm.json",
-    "build:cjs": "bunx tsc -p tsconfig.cjs.json && bun run build:cjs-rename",
-    "build:cjs-rename": "find dist -name '*.js' -not -name '*.cjs' -exec sh -c 'cp \"$1\" \"${1%.js}.cjs\"' _ {} \\;",
+    "build": "tsc -p tsconfig.esm.json",
     "clean": "rm -rf dist",
-    "dev": "bunx tsc --watch",
-    "test": "bun test",
-    "test:run": "bun test",
-    "lint": "bunx eslint src/",
-    "lint:fix": "bunx eslint src/ --fix",
-    "typecheck": "bunx tsc --noEmit",
-    "format": "bunx prettier --write \"src/**/*.ts\"",
-    "format:check": "bunx prettier --check \"src/**/*.ts\"",
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
     "verify": "bun run typecheck && bun run lint && bun run test && bun run build",
     "prepublishOnly": "bun run clean && bun run verify"
   },
@@ -45,31 +30,24 @@
     "CLAUDE.md"
   ],
   "keywords": [
-    "rate-limiting",
-    "revenuecat",
     "subscription",
+    "revenuecat",
     "entitlements",
-    "hono",
-    "drizzle"
+    "in-app-purchase"
   ],
   "author": "Sudobility",
   "license": "MIT",
-  "peerDependencies": {
-    "drizzle-orm": "^0.45.0",
-    "hono": "^4.0.0"
-  },
+  "peerDependencies": {},
   "devDependencies": {
+    "vitest": "^4.0.4",
     "@types/bun": "latest",
-    "@types/node": "^24.10.1",
+    "@types/node": "^24.0.0",
     "@typescript-eslint/eslint-plugin": "^8.50.0",
     "@typescript-eslint/parser": "^8.50.0",
-    "drizzle-orm": "^0.45.0",
-    "eslint": "^9.39.2",
+    "eslint": "^9.39.0",
     "eslint-plugin-import": "^2.32.0",
-    "hono": "^4.10.7",
-    "postgres": "^3.4.7",
-    "prettier": "^3.7.4",
-    "typescript": "^5.9.3"
+    "prettier": "^3.7.0",
+    "typescript": "^5.9.0"
   },
   "publishConfig": {
     "access": "public"

@@ -1,15 +1,15 @@
 # Subscription Service
 
-Shared rate limiting library based on RevenueCat entitlements.
+Shared backend library for subscription management using RevenueCat.
 
 **npm**: `@sudobility/subscription_service` (public)
 
 ## Tech Stack
 
-- **Language**: TypeScript
-- **Build**: Dual ESM/CJS output
+- **Language**: TypeScript (strict mode)
 - **Runtime**: Bun
-- **Peer Dependencies**: drizzle-orm, hono
+- **Build**: TypeScript compiler (ESM)
+- **Test**: vitest
 
 ## Project Structure
 
@@ -18,20 +18,11 @@ src/
 ├── index.ts                    # Main exports
 ├── types/
 │   ├── index.ts                # Type re-exports
-│   ├── rate-limits.ts          # RateLimits, RateLimitsConfig
-│   ├── entitlements.ts         # RevenueCat types
-│   └── responses.ts            # RateLimitCheckResult
-├── schema/
-│   └── rate-limits.ts          # Drizzle schema template
-├── helpers/
-│   ├── index.ts                # Helper exports
-│   ├── RevenueCatHelper.ts     # Get entitlements from RC API
-│   ├── EntitlementHelper.ts    # Resolve rate limits
-│   └── RateLimitChecker.ts     # Check/increment counters
-├── middleware/
-│   └── hono.ts                 # Hono middleware factory
-└── utils/
-    └── time.ts                 # Reset time utilities
+│   ├── entitlements.ts         # RevenueCat API types
+│   └── subscription.ts         # SubscriptionInfo type
+└── helpers/
+    ├── index.ts                # Helper re-exports
+    └── SubscriptionHelper.ts   # RevenueCat API client
 tests/
 └── *.test.ts
 ```
@@ -39,73 +30,79 @@ tests/
 ## Commands
 
 ```bash
-bun run build        # Build ESM + CJS
+bun run build        # Build ESM
 bun run clean        # Remove dist/
 bun run dev          # Watch mode
 bun test             # Run tests
 bun run lint         # Run ESLint
 bun run typecheck    # TypeScript check
-bun run verify       # All checks + build
+bun run verify       # All checks + build (use before commit)
 ```
 
-## Key Classes
+## Key Concepts
 
-### RevenueCatHelper
-Gets user entitlements from RevenueCat API. Returns `["none"]` if no subscription.
+### SubscriptionHelper
 
-### EntitlementHelper
-Resolves rate limits from entitlements. Supports multiple entitlements with upper-bound logic.
+Fetches user entitlements from RevenueCat API v1.
 
-### RateLimitChecker
-Checks rate limits against database and increments counters. Handles automatic counter resets.
+- Uses RevenueCat secret API key (server-side only)
+- Supports testMode to include/exclude sandbox purchases
+- Returns `["none"]` if user has no active entitlements
 
-### createRateLimitMiddleware
-Factory for Hono middleware that combines all helpers.
+### testMode Parameter
 
-## Usage Example
+- `testMode=true`: Accept sandbox purchases (for testing)
+- `testMode=false` (default): Reject sandbox purchases (production)
+
+The helper checks each subscription's `sandbox` flag and filters accordingly.
+
+## Usage
 
 ```typescript
-import { createRateLimitMiddleware } from "@sudobility/subscription_service/middleware/hono";
-import type { RateLimitsConfig } from "@sudobility/subscription_service";
+import { SubscriptionHelper, NONE_ENTITLEMENT } from "@sudobility/subscription_service";
 
-const config: RateLimitsConfig = {
-  none: { hourly: 5, daily: 20, monthly: 100 },
-  pro: { hourly: undefined, daily: undefined, monthly: undefined },
-};
-
-const middleware = createRateLimitMiddleware({
+const helper = new SubscriptionHelper({
   revenueCatApiKey: process.env.REVENUECAT_API_KEY!,
-  rateLimitsConfig: config,
-  db,
-  rateLimitsTable: rateLimits,
-  getUserId: (c) => c.get("firebaseUser").uid,
 });
 
-app.use("/api/*", middleware);
+// Get entitlements (production mode - no sandbox)
+const entitlements = await helper.getEntitlements(userId);
+// Returns: ["pro"] or ["none"]
+
+// Get entitlements (test mode - includes sandbox)
+const entitlements = await helper.getEntitlements(userId, true);
+
+// Get full subscription info
+const info = await helper.getSubscriptionInfo(userId, testMode);
+// Returns: { entitlements: ["pro"], subscriptionStartedAt: Date | null }
+
+// Check if user has a subscription
+if (!info.entitlements.includes(NONE_ENTITLEMENT)) {
+  // User has active subscription
+}
 ```
 
-## Database Schema
+## Architecture
 
-Consuming APIs must copy the schema template to their own database:
-
-```typescript
-// Copy from @sudobility/subscription_service/schema
-export const rateLimits = pgTable("rate_limits", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  user_id: varchar("user_id", { length: 128 }).notNull().unique(),
-  requests_this_hour: integer("requests_this_hour").notNull().default(0),
-  requests_this_day: integer("requests_this_day").notNull().default(0),
-  requests_this_month: integer("requests_this_month").notNull().default(0),
-  hour_reset_at: timestamp("hour_reset_at"),
-  day_reset_at: timestamp("day_reset_at"),
-  month_reset_at: timestamp("month_reset_at"),
-  created_at: timestamp("created_at").defaultNow(),
-  updated_at: timestamp("updated_at").defaultNow(),
-});
+```
+subscription_service (this package)
+    ↑
+ratelimit_service (depends on this)
+    ↑
+shapeshyft_api, sudojo_api, etc.
 ```
 
 ## Consuming APIs
 
-- sudojo_api
+APIs using this library:
 - shapeshyft_api
+- sudojo_api
 - whisperly_api
+- ratelimit_service
+
+## Publishing
+
+```bash
+bun run verify       # All checks
+npm publish          # Publish to npm
+```
