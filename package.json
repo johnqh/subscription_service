@@ -1,6 +1,6 @@
 {
   "name": "@sudobility/subscription_service",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Shared subscription management library using RevenueCat for entitlements",
   "type": "module",
   "main": "./dist/index.js",
@@ -36,7 +36,7 @@
     "in-app-purchase"
   ],
   "author": "Sudobility",
-  "license": "MIT",
+  "license": "BUSL-1.1",
   "peerDependencies": {},
   "devDependencies": {
     "vitest": "^4.0.4",
