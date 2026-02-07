@@ -8,6 +8,7 @@ Shared backend library for subscription management using RevenueCat.
 
 - **Language**: TypeScript (strict mode)
 - **Runtime**: Bun
+- **Package Manager**: Bun (do not use npm/yarn/pnpm for installing dependencies)
 - **Build**: TypeScript compiler (ESM)
 - **Test**: vitest
 
