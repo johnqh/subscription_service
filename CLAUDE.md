@@ -107,3 +107,48 @@ APIs using this library:
 bun run verify       # All checks
 npm publish          # Publish to npm
 ```
+
+## Workspace Context
+
+This project is part of the **ShapeShyft** multi-project workspace at the parent directory. See `../CLAUDE.md` for the full architecture, dependency graph, and build order.
+
+## Downstream Impact
+
+| Downstream Consumer | Relationship |
+|---------------------|-------------|
+| `shapeshyft_api` | Direct dependency - uses SubscriptionHelper for entitlement checks |
+
+After making changes:
+1. `bun run verify` in this project (includes tests)
+2. `npm publish`
+3. In `shapeshyft_api`: `bun update @sudobility/subscription_service` then rebuild
+
+## Local Dev Workflow
+
+```bash
+# In this project:
+bun link
+
+# In shapeshyft_api:
+bun link @sudobility/subscription_service
+
+# Rebuild after changes:
+bun run build
+
+# When done, unlink:
+bun unlink @sudobility/subscription_service && bun install
+```
+
+## Pre-Commit Checklist
+
+```bash
+bun run verify    # Runs: typecheck -> lint -> test -> build
+```
+
+## Gotchas
+
+- **No peer dependencies** -- this package is fully self-contained (`"peerDependencies": {}`).
+- **RevenueCat API key is a server-side secret** -- never expose it to the client.
+- **`testMode` controls sandbox filtering** -- in production, always pass `false`. Passing `true` includes sandbox purchases with fake entitlements.
+- **`NONE_ENTITLEMENT` is the string `"none"`** -- it is a constant, not null/undefined. Always compare with `NONE_ENTITLEMENT`.
+- **ESM-only output** -- no CJS build.
