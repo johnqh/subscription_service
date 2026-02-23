@@ -18,6 +18,8 @@ export interface SubscriptionHelperConfig {
   revenueCatApiKey: string;
   /** Base URL for RevenueCat API. Defaults to https://api.revenuecat.com/v1 */
   baseUrl?: string;
+  /** Request timeout in milliseconds. Defaults to 10000 (10 seconds). */
+  timeoutMs?: number;
 }
 
 /**
@@ -30,6 +32,7 @@ export interface SubscriptionHelperConfig {
 export class SubscriptionHelper {
   private readonly apiKey: string;
   private readonly baseUrl: string;
+  private readonly timeoutMs: number;
 
   /**
    * Creates a new SubscriptionHelper instance.
@@ -39,6 +42,7 @@ export class SubscriptionHelper {
   constructor(config: SubscriptionHelperConfig) {
     this.apiKey = config.revenueCatApiKey;
     this.baseUrl = config.baseUrl ?? "https://api.revenuecat.com/v1";
+    this.timeoutMs = config.timeoutMs ?? 10_000;
   }
 
   /**
@@ -55,6 +59,10 @@ export class SubscriptionHelper {
     userId: string,
     testMode: boolean = false
   ): Promise<string[]> {
+    if (!userId || typeof userId !== "string") {
+      throw new Error("userId must be a non-empty string");
+    }
+
     const info = await this.getSubscriptionInfo(userId, testMode);
     return info.entitlements;
   }
@@ -75,14 +83,27 @@ export class SubscriptionHelper {
     userId: string,
     testMode: boolean = false
   ): Promise<SubscriptionInfo> {
+    if (!userId || typeof userId !== "string") {
+      throw new Error("userId must be a non-empty string");
+    }
+
     const url = `${this.baseUrl}/subscribers/${encodeURIComponent(userId)}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${this.apiKey}`,
-        "Content-Type": "application/json",
-      },
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), this.timeoutMs);
+
+    let response: Response;
+    try {
+      response = await fetch(url, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${this.apiKey}`,
+          "Content-Type": "application/json",
+        },
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeoutId);
+    }
 
     if (response.status === 404) {
       return {

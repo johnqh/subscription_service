@@ -1,6 +1,6 @@
 {
   "name": "@sudobility/subscription_service",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Shared subscription management library using RevenueCat for entitlements",
   "type": "module",
   "main": "./dist/index.js",
