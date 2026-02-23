@@ -1,4 +1,11 @@
 /**
+ * @fileoverview RevenueCat API response types for the subscriber endpoint.
+ *
+ * These interfaces model the JSON response from RevenueCat's
+ * `GET /v1/subscribers/{user_id}` endpoint.
+ */
+
+/**
  * RevenueCat entitlement information from the subscriber API.
  */
 export interface RevenueCatEntitlement {

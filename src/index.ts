@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Public API for @sudobility/subscription_service.
+ *
+ * Re-exports all types and the SubscriptionHelper class for server-side
+ * subscription management via RevenueCat.
+ */
+
 // Types
 export {
   type RevenueCatEntitlement,

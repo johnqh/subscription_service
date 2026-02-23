@@ -1,3 +1,11 @@
+/**
+ * @fileoverview RevenueCat API client for server-side subscription management.
+ *
+ * Provides the `SubscriptionHelper` class that calls the RevenueCat REST API v1
+ * to fetch user entitlements and subscription information. Handles sandbox
+ * filtering via the `testMode` parameter.
+ */
+
 import { NONE_ENTITLEMENT } from "@sudobility/types";
 import type { RevenueCatSubscriberResponse } from "../types/entitlements";
 import type { SubscriptionInfo } from "../types/subscription";
@@ -15,11 +23,19 @@ export interface SubscriptionHelperConfig {
 /**
  * Helper class for interacting with RevenueCat API to get user entitlements
  * and subscription information.
+ *
+ * Uses the RevenueCat REST API v1 endpoint `GET /subscribers/{user_id}` to
+ * fetch subscriber data, then filters entitlements by expiration and sandbox status.
  */
 export class SubscriptionHelper {
   private readonly apiKey: string;
   private readonly baseUrl: string;
 
+  /**
+   * Creates a new SubscriptionHelper instance.
+   *
+   * @param config - Configuration containing the RevenueCat API key and optional base URL.
+   */
   constructor(config: SubscriptionHelperConfig) {
     this.apiKey = config.revenueCatApiKey;
     this.baseUrl = config.baseUrl ?? "https://api.revenuecat.com/v1";
@@ -27,6 +43,13 @@ export class SubscriptionHelper {
 
   /**
    * Get active entitlement names for a user.
+   *
+   * This is a convenience wrapper around `getSubscriptionInfo()` that returns
+   * only the entitlements array.
+   *
+   * @param userId - The RevenueCat user identifier.
+   * @param testMode - When true, includes sandbox purchases. Defaults to false.
+   * @returns Array of active entitlement names, or `["none"]` if no active entitlements.
    */
   async getEntitlements(
     userId: string,
@@ -38,6 +61,15 @@ export class SubscriptionHelper {
 
   /**
    * Get full subscription info including entitlements and subscription start date.
+   *
+   * Fetches the subscriber data from RevenueCat, filters out expired entitlements
+   * and (optionally) sandbox purchases, and returns the active entitlement names
+   * along with the earliest purchase date.
+   *
+   * @param userId - The RevenueCat user identifier.
+   * @param testMode - When true, includes sandbox purchases. Defaults to false.
+   * @returns Subscription info with active entitlements and earliest purchase date.
+   * @throws Error if the RevenueCat API returns a non-404, non-OK response.
    */
   async getSubscriptionInfo(
     userId: string,
