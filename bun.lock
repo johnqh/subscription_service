@@ -15,7 +15,7 @@
         "vitest": "^4.0.4",
       },
       "peerDependencies": {
-        "@sudobility/types": "^1.9.53",
+        "@sudobility/types": "^1.9.54",
       },
     },
   },
