@@ -141,13 +141,6 @@ APIs using this library:
 - whisperly_api
 - ratelimit_service
 
-## Testing
-
-- Framework: Vitest (vitest run)
-- Tests located in `tests/` directory (not alongside source)
-- Uses `vi.fn()` and `vi.stubGlobal("fetch", ...)` to mock HTTP calls
-- Tests cover: 404 handling, API errors, active entitlements, expired entitlements, sandbox filtering, test mode, multiple entitlements with earliest date
-
 ## Publishing
 
 ```bash
