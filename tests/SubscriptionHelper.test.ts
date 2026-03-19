@@ -36,6 +36,10 @@ describe("SubscriptionHelper", () => {
       expect(result.entitlements).toEqual([NONE_ENTITLEMENT]);
       expect(result.subscriptionStartedAt).toBeNull();
       expect(result.platform).toBeNull();
+      expect(result.productIdentifier).toBeNull();
+      expect(result.expiresDate).toBeNull();
+      expect(result.sandbox).toBe(false);
+      expect(result.store).toBeNull();
     });
 
     it("should throw error on API failure", async () => {
@@ -84,6 +88,10 @@ describe("SubscriptionHelper", () => {
       expect(result.subscriptionStartedAt).toEqual(
         new Date("2024-01-15T00:00:00Z")
       );
+      expect(result.productIdentifier).toBe("pro_monthly");
+      expect(result.expiresDate).toEqual(new Date(futureDate));
+      expect(result.sandbox).toBe(false);
+      expect(result.store).toBe("app_store");
     });
 
     it("should filter expired entitlements", async () => {
@@ -119,6 +127,10 @@ describe("SubscriptionHelper", () => {
       expect(result.entitlements).toEqual([NONE_ENTITLEMENT]);
       expect(result.subscriptionStartedAt).toBeNull();
       expect(result.platform).toBeNull();
+      expect(result.productIdentifier).toBeNull();
+      expect(result.expiresDate).toBeNull();
+      expect(result.sandbox).toBe(false);
+      expect(result.store).toBeNull();
     });
 
     it("should filter sandbox purchases in production mode", async () => {
@@ -154,6 +166,10 @@ describe("SubscriptionHelper", () => {
       expect(result.entitlements).toEqual([NONE_ENTITLEMENT]);
       expect(result.subscriptionStartedAt).toBeNull();
       expect(result.platform).toBeNull();
+      expect(result.productIdentifier).toBeNull();
+      expect(result.expiresDate).toBeNull();
+      expect(result.sandbox).toBe(false);
+      expect(result.store).toBeNull();
     });
 
     it("should include sandbox purchases in test mode", async () => {
@@ -190,6 +206,9 @@ describe("SubscriptionHelper", () => {
       expect(result.subscriptionStartedAt).toEqual(
         new Date("2024-01-15T00:00:00Z")
       );
+      expect(result.productIdentifier).toBe("pro_monthly");
+      expect(result.sandbox).toBe(true);
+      expect(result.store).toBe("app_store");
     });
 
     it("should return earliest purchase date with multiple entitlements", async () => {

@@ -121,6 +121,10 @@ export class SubscriptionHelper {
         entitlements: [NONE_ENTITLEMENT],
         subscriptionStartedAt: null,
         platform: null,
+        productIdentifier: null,
+        expiresDate: null,
+        sandbox: false,
+        store: null,
       };
     }
 
@@ -138,6 +142,10 @@ export class SubscriptionHelper {
     const activeEntitlements: string[] = [];
     let earliestPurchaseDate: Date | null = null;
     let resultPlatform: SubscriptionPlatform | null = null;
+    let resultProductIdentifier: string | null = null;
+    let resultExpiresDate: Date | null = null;
+    let resultSandbox = false;
+    let resultStore: string | null = null;
 
     for (const [name, entitlement] of Object.entries(entitlements)) {
       const isActive =
@@ -161,6 +169,12 @@ export class SubscriptionHelper {
         earliestPurchaseDate = purchaseDate;
         resultPlatform =
           STORE_PLATFORM_MAP[subscription?.store ?? ""] ?? null;
+        resultProductIdentifier = entitlement.product_identifier;
+        resultExpiresDate = entitlement.expires_date
+          ? new Date(entitlement.expires_date)
+          : null;
+        resultSandbox = subscription?.sandbox ?? false;
+        resultStore = subscription?.store ?? null;
       }
     }
 
@@ -169,6 +183,10 @@ export class SubscriptionHelper {
         entitlements: [NONE_ENTITLEMENT],
         subscriptionStartedAt: null,
         platform: null,
+        productIdentifier: null,
+        expiresDate: null,
+        sandbox: false,
+        store: null,
       };
     }
 
@@ -176,6 +194,10 @@ export class SubscriptionHelper {
       entitlements: activeEntitlements,
       subscriptionStartedAt: earliestPurchaseDate,
       platform: resultPlatform,
+      productIdentifier: resultProductIdentifier,
+      expiresDate: resultExpiresDate,
+      sandbox: resultSandbox,
+      store: resultStore,
     };
   }
 }
