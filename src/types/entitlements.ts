@@ -31,6 +31,8 @@ export interface RevenueCatSubscription {
   sandbox: boolean;
   /** Store where the purchase was made */
   store: string;
+  /** Environment: "sandbox" or "production" (present on iOS/Android/macOS subscriptions) */
+  environment?: string;
 }
 
 /**

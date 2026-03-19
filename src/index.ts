@@ -7,6 +7,7 @@
 
 // Types
 export {
+  type RevenueCatApiKeys,
   type RevenueCatEntitlement,
   type RevenueCatSubscription,
   type RevenueCatSubscriberResponse,
