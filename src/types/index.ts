@@ -8,4 +8,4 @@ export {
   type RevenueCatSubscriberResponse,
 } from "./entitlements";
 
-export { type RevenueCatApiKeys, type SubscriptionInfo } from "./subscription";
+export { type SubscriptionInfo } from "./subscription";
