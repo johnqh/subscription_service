@@ -1,10 +1,10 @@
 {
   "name": "@sudobility/subscription_service",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "author": "Sudobility",
   "main": "./dist/index.js",
   "devDependencies": {
-    "@sudobility/types": "^1.9.59",
+    "@sudobility/types": "^1.9.60",
     "@types/bun": "latest",
     "@types/node": "^24.0.0",
     "@typescript-eslint/eslint-plugin": "^8.50.0",
@@ -51,5 +51,9 @@
     "prepublishOnly": "bun run clean && bun run verify"
   },
   "type": "module",
-  "types": "./dist/index.d.ts"
+  "types": "./dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/johnqh/subscription_service.git"
+  }
 }
