@@ -125,6 +125,8 @@ export class SubscriptionHelper {
         expiresDate: null,
         sandbox: false,
         store: null,
+        willRenew: false,
+        managementUrl: null,
       };
     }
 
@@ -146,6 +148,7 @@ export class SubscriptionHelper {
     let resultExpiresDate: Date | null = null;
     let resultSandbox = false;
     let resultStore: string | null = null;
+    let resultWillRenew = false;
 
     for (const [name, entitlement] of Object.entries(entitlements)) {
       const isActive =
@@ -175,8 +178,11 @@ export class SubscriptionHelper {
           : null;
         resultSandbox = subscription?.sandbox ?? false;
         resultStore = subscription?.store ?? null;
+        resultWillRenew = subscription?.unsubscribe_detected_at == null;
       }
     }
+
+    const managementUrl = data.subscriber?.management_url ?? null;
 
     if (activeEntitlements.length === 0) {
       return {
@@ -187,6 +193,8 @@ export class SubscriptionHelper {
         expiresDate: null,
         sandbox: false,
         store: null,
+        willRenew: false,
+        managementUrl,
       };
     }
 
@@ -198,6 +206,8 @@ export class SubscriptionHelper {
       expiresDate: resultExpiresDate,
       sandbox: resultSandbox,
       store: resultStore,
+      willRenew: resultWillRenew,
+      managementUrl,
     };
   }
 }

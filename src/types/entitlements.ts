@@ -33,6 +33,8 @@ export interface RevenueCatSubscription {
   store: string;
   /** Environment: "sandbox" or "production" (present on iOS/Android/macOS subscriptions) */
   environment?: string;
+  /** When unsubscribe was detected, null if still subscribed */
+  unsubscribe_detected_at: string | null;
 }
 
 /**
@@ -46,5 +48,7 @@ export interface RevenueCatSubscriberResponse {
     subscriptions: {
       [key: string]: RevenueCatSubscription;
     };
+    /** URL for managing the subscription (e.g., Stripe billing portal) */
+    management_url: string | null;
   };
 }

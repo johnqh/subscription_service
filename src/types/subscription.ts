@@ -22,4 +22,8 @@ export interface SubscriptionInfo {
   sandbox: boolean;
   /** Raw store identifier (e.g., "stripe", "app_store", "play_store"), or null if no subscription */
   store: string | null;
+  /** Whether the subscription will auto-renew */
+  willRenew: boolean;
+  /** URL for managing the subscription (e.g., Stripe billing portal), or null */
+  managementUrl: string | null;
 }
