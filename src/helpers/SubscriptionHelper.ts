@@ -170,8 +170,7 @@ export class SubscriptionHelper {
       const purchaseDate = new Date(entitlement.purchase_date);
       if (!earliestPurchaseDate || purchaseDate < earliestPurchaseDate) {
         earliestPurchaseDate = purchaseDate;
-        resultPlatform =
-          STORE_PLATFORM_MAP[subscription?.store ?? ""] ?? null;
+        resultPlatform = STORE_PLATFORM_MAP[subscription?.store ?? ""] ?? null;
         resultProductIdentifier = entitlement.product_identifier;
         resultExpiresDate = entitlement.expires_date
           ? new Date(entitlement.expires_date)

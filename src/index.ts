@@ -17,7 +17,4 @@ export {
 export { NONE_ENTITLEMENT } from "@sudobility/types";
 
 // Helpers
-export {
-  SubscriptionHelper,
-  type SubscriptionHelperConfig,
-} from "./helpers";
+export { SubscriptionHelper, type SubscriptionHelperConfig } from "./helpers";
