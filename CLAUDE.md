@@ -1,5 +1,10 @@
 # Subscription Service - AI Development Guide
 
+> **Git policy — never auto-commit or auto-push.** Leave your work in the working tree.
+> Run `git commit`, `git push`, `gh pr create`, or `scripts/push_all.sh` **only when the user
+> explicitly asks in that turn**. Approval for an earlier change does not carry forward, and
+> finishing a task is not permission to commit it.
+
 ## Overview
 
 Shared backend library for subscription management using RevenueCat. Provides a `SubscriptionHelper` class that calls the RevenueCat REST API v1 to fetch user entitlements and subscription information. Designed for server-side use only (requires a secret API key).
@@ -206,3 +211,7 @@ bun run verify    # Runs: typecheck -> lint -> test -> build
 - **404 from RevenueCat returns `["none"]`** -- Not an error; it means the user has never been seen by RevenueCat.
 - **`baseUrl` defaults to `https://api.revenuecat.com/v1`** -- Override for testing with a mock server.
 - **User ID is URL-encoded** -- `encodeURIComponent(userId)` is applied before constructing the API URL.
+
+## Git Workflow
+
+- Do not use feature branches for code changes. Always stay on the current branch.
